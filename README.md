@@ -1,34 +1,43 @@
-# GitHub Codespaces IHP Template
+# IHP Project
 
-This is an IHP template configured to run on GitHub Codespaces and [VSCode Devcontainers](https://code.visualstudio.com/docs/devcontainers/containers). 
+This is an IHP (Integrated Haskell Platform) project with a GitHub Actions workflow for continuous integration. For more information about IHP, see the [IHP Documentation](https://ihp.digitallyinduced.com/Guide/).
 
-## Getting Started
+## GitHub Actions Workflow
 
-### For New Projects
-1. Create a repository from this template.
-2. Run it in Codespaces / Devcontainers.
-3. Once the Codespace launches, run `./install-nix.sh` to install the necessary things. This may take 10+ minutes the first time.
-4. Once it fully finishes, close the running terminal and open a new one.  This will download a few more things to actually run the server.
-5. Run `devenv up` to start the server.
-6. Once the server starts, find the 8000 port on the ports screen and click the globe icon to open it.
-7. Have fun with IHP! :)
+This project includes a GitHub Actions workflow that builds the project and runs its test suite via `nix flake check`. The workflow is defined in [`.github/workflows/nix-flake-check.yml`](.github/workflows/nix-flake-check.yml).
 
-_**NOTE:**_ Codespaces storage use is calculated hourly and is measured in gb-months. If your Codespace is bigger than 15gb (20gb if you get GitHub Pro 
-through the Student Developer Pack), you will have to delete it when you're not actively coding, or else you will run out of gb-months of 
-storage before the end of the month. **_Make sure you commit your code first if you delete the Codespace!!_** You can always recreate it, though you'll 
-have to wait for the things to download again, unfortunately. Most times it should only take up about 17-19gb which won't exhaust the 20gb limit, but would exhaust 
-the 15gb limit. **_Be careful not to have more than one Codespace in your account at once as this will eat up your storage too!_**
+### Workflow Triggers
 
-**Update:** It looks like the new IHP version has 21gb of dependencies. So we'll have to find another solution so we don't always have to delete the
-Codespaces.
+The `Test` workflow runs on:
+- Push to the `master` (or `main`) branch
+- Pull requests targeting the `master` (or `main`) branch
 
-### An existing IHP project
-To add support to an existing IHP project, simply copy the [devcontainer configuration](.devcontainer/devcontainer.json) to your project, 
-placing it in `.devcontainer/devcontainer.json`. Then follow the above instructions.
+Both branch names are listed so the workflow works whether the default branch is `master` (as in this repository) or `main` (the default for new repositories created from this boilerplate).
 
-## Note
-Sometimes GitHub updates Codespaces or their base container image, which may break this devcontainer configuration. Please check here regularly for 
-updates and post an issue if you have problems running a Codespace / Devcontainer. To update, simply copy the new `devcontainer.json` 
-to your project, and then rebuild the container or recreate your Codespace / Devcontainer entirely.
+### What the workflow does
 
-See also [ihp.digitallyinduced.com](https://ihp.digitallyinduced.com/)
+The `test` job runs on `ubuntu-latest` and performs the following steps:
+1. Checks out the code
+2. Frees up disk space for large Nix builds ([nothing-but-nix](https://github.com/wimpysworld/nothing-but-nix))
+3. Installs Nix using the [Determinate Nix installer](https://github.com/DeterminateSystems/nix-installer-action) with lazy trees enabled
+4. Configures the [`digitallyinduced` Cachix cache](https://app.cachix.org/cache/digitallyinduced) for faster builds (pull only — `skipPush: true`)
+5. Enables the [Magic Nix Cache](https://github.com/DeterminateSystems/magic-nix-cache-action)
+6. Runs `nix flake check --impure -L`, which builds the project and runs the test suite
+
+## Running the checks locally
+
+You can run the same checks that CI runs:
+
+```bash
+nix flake check --impure
+```
+
+## Deployment
+
+This boilerplate does not include an automated deployment job. To deploy your project, follow the [IHP Deployment Guide](https://ihp.digitallyinduced.com/Guide/deployment.html#deploying-with-deploytonixos) to set up a NixOS server.
+
+## Support
+
+For issues related to IHP or this project's setup, please refer to the [IHP documentation](https://ihp.digitallyinduced.com/Guide/) or seek help on the [IHP Forum](https://ihp.digitallyinduced.com/community/).
+
+For project-specific issues, please open an issue in this repository.
