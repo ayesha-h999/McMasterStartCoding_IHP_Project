@@ -12,11 +12,11 @@ instance View IndexView where
             <table class="table">
                 <thead>
                     <tr>
-                        <th>Title</th>
-                        <th>Body</th>
+                        <th>Post Title</th>
+                        <!-- <th>Body</th> -->
                         <th></th>
                         <th></th>
-                        <th></th>
+                        <!-- <th></th> -->
                     </tr>
                 </thead>
                 <tbody>{forEach posts renderPost}</tbody>
@@ -32,9 +32,9 @@ instance View IndexView where
 renderPost :: Post -> Html
 renderPost post = [hsx|
     <tr>
-        <td>{post.title}</td>
-        <td>{post.body}</td>
-        <td><a href={ShowPostAction post.id}>Show</a></td>
+        <td><a href={ShowPostAction post.id}>{post.title}</a></td>
+        <!-- <td>{post.body}</td> -->
+        <!-- <td><a href={ShowPostAction post.id}>Show</a></td> -->
         <td><a href={EditPostAction post.id} class="text-muted">Edit</a></td>
         <td><a href={DeletePostAction post.id} class="js-delete text-muted">Delete</a></td>
     </tr>

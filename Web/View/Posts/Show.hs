@@ -6,11 +6,12 @@ data ShowView = ShowView { post :: Post }
 instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
-        <h1>Show Post</h1>
-        <dl>
+        <h1>{post.title}</h1>
+        <div>{post.body}</div>
+        <!-- <dl>
             <dt>Title</dt><dd>{post.title}</dd>
             <dt>Body</dt><dd>{post.body}</dd>
-        </dl>
+        </dl> -->
 
     |]
         where
