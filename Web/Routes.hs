@@ -19,3 +19,14 @@ POST /UpdatePost?postId UpdatePostAction
 DELETE /DeletePost?postId DeletePostAction
 |]
 
+
+[routes|CommentsController
+GET /Comments CommentsAction
+GET /NewComment NewCommentAction
+POST /CreateComment CreateCommentAction
+GET /ShowComment?commentId ShowCommentAction
+GET /EditComment?commentId EditCommentAction
+POST /UpdateComment?commentId UpdateCommentAction
+DELETE /DeleteComment?commentId DeleteCommentAction
+|]
+
