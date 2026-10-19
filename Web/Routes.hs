@@ -22,7 +22,7 @@ DELETE /DeletePost?postId DeletePostAction
 
 [routes|CommentsController
 GET /Comments CommentsAction
-GET /NewComment NewCommentAction
+GET /NewComment?postId NewCommentAction
 POST /CreateComment CreateCommentAction
 GET /ShowComment?commentId ShowCommentAction
 GET /EditComment?commentId EditCommentAction

@@ -15,7 +15,8 @@ instance View ShowView where
             <dt>Title</dt><dd>{post.title}</dd>
             <dt>Body</dt><dd>{post.body}</dd>
         </dl> -->
-        <a href={NewCommentAction}>Add Comment</a>
+        <a href={NewCommentAction post.id}>Add Comment</a>
+
         
 
 

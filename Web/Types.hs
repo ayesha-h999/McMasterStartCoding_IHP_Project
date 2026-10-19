@@ -21,7 +21,7 @@ data PostsController
 
 data CommentsController
     = CommentsAction
-    | NewCommentAction
+    | NewCommentAction { postId :: !(Id Post) }
     | ShowCommentAction { commentId :: !(Id Comment) }
     | CreateCommentAction
     | EditCommentAction { commentId :: !(Id Comment) }
