@@ -21,6 +21,7 @@ instance Controller PostsController where
 
     action ShowPostAction { postId } = do
         post <- fetch postId
+            >>= fetchRelated #comments
         render ShowView { .. }
 
     action EditPostAction { postId } = do

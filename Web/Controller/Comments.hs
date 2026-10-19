@@ -47,7 +47,7 @@ instance Controller CommentsController where
                 Right comment -> do
                     comment <- comment |> createRecord
                     setSuccessMessage "Comment created"
-                    redirectTo CommentsAction
+                    redirectTo ShowPostAction { postId = comment.postId }
 
     action DeleteCommentAction { commentId } = do
         comment <- fetch commentId
