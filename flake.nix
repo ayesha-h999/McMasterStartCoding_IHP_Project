@@ -52,7 +52,7 @@
                     # Disable relation type machinery for faster compilation.
                     # Coding agents usually don't need this because they use typedSql instead.
                     # Human-written app code may prefer fetchRelated/Include; set this to true in that case.
-                    relationSupport = false;
+                    relationSupport = true;
 
                     # Skip tests/haddock for specific packages to speed up builds
                     # dontCheckPackages = [ "my-package" ];
