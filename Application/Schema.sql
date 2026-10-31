@@ -11,7 +11,8 @@ CREATE TABLE comments (
     post_id UUID NOT NULL,
     author TEXT NOT NULL,
     body TEXT NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    title TEXT DEFAULT '' NOT NULL
 );
 CREATE INDEX comments_post_id_index ON comments (post_id);
 ALTER TABLE comments ADD CONSTRAINT comments_ref_post_id FOREIGN KEY (post_id) REFERENCES posts (id) ON DELETE CASCADE;

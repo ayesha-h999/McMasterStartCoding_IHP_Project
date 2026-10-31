@@ -19,6 +19,7 @@ renderForm :: Comment -> Html
 renderForm comment = formFor comment [hsx|
     {- postId needs to be a selectField -}
         {(textField #postId)}
+    {(textField #title)}
     {(textField #author)}
     {(textField #body)}
     {submitButton}

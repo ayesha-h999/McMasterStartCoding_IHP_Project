@@ -38,7 +38,8 @@ renderMarkdown text =
 
 renderComment comment = [hsx|
         <div class="mt-4">
-            <h5>{comment.author}</h5>
+            <h5>{comment.title}</h5>
+            <p>Commented By: {comment.author}</p>
             <p>{comment.body}</p>
         </div>
     |]

@@ -9,6 +9,7 @@ instance View ShowView where
         <h1>Show Comment</h1>
         <dl>
             <dt>Post Id</dt><dd>{comment.postId}</dd>
+            <dt>Title</dt><dd>{comment.title}</dd>
             <dt>Author</dt><dd>{comment.author}</dd>
             <dt>Body</dt><dd>{comment.body}</dd>
         </dl>

@@ -13,6 +13,7 @@ instance View IndexView where
                 <thead>
                     <tr>
                         <th>Post Id</th>
+                        <th>Title</th>
                         <th>Author</th>
                         <th>Body</th>
                         <th></th>
@@ -34,6 +35,7 @@ renderComment :: Comment -> Html
 renderComment comment = [hsx|
     <tr>
         <td>{comment.postId}</td>
+        <td>{comment.title}</td>
         <td>{comment.author}</td>
         <td>{comment.body}</td>
         <td><a href={ShowCommentAction comment.id}>Show</a></td>
