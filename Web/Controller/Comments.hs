@@ -8,7 +8,9 @@ import Web.View.Comments.Show
 
 instance Controller CommentsController where
     action CommentsAction = do
-        comments <- query @Comment |> fetch
+        comments <- query @Comment 
+            |> orderByDesc #createdAt
+            |> fetch
         render IndexView { .. }
 
     action NewCommentAction { postId } = do

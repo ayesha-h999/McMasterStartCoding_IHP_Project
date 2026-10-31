@@ -10,6 +10,7 @@ instance View ShowView where
         {breadcrumb}
         <h1>{post.title}</h1>
         <p>{post.createdAt |> timeAgo}</p>
+        <p>Posted by: {post.author}</p>
         <div>{post.body |> renderMarkdown}</div>
 
         <a href={NewCommentAction post.id}>Add Comment</a>

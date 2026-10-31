@@ -59,8 +59,9 @@ instance Controller PostsController where
         redirectTo PostsAction
 
 buildPost post = post
-    |> fill @'["title", "body"]
+    |> fill @'["title", "author", "body"]
     |> validateField #title nonEmpty
+    |> validateField #author nonEmpty
     |> validateField #body nonEmpty
     |> validateField #body isMarkdown
 
