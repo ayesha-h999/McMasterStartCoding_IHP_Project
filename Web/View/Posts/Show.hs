@@ -24,8 +24,8 @@ instance View ShowView where
         {post.body |> renderMarkdown}
     </div>
     <div class="post-voting">
-        <span>👍 {upvoteCount}</span>
-        <span>👎 {downvoteCount}</span>
+        <span>▲ {upvoteCount}</span>
+        <span>▼ {downvoteCount}</span>
         {voteButtons post.id}
     </div>
 </div>
@@ -76,10 +76,10 @@ voteButtons postId =
         Just _ -> [hsx|
             <form method="POST" action={VotePostAction postId}>
                 <button type="submit" name="vote" value="1">
-                    👍 Upvote
+                    ▲ Upvote
                 </button>
                 <button type="submit" name="vote" value="-1">
-                    👎 Downvote
+                    ▼ Downvote
                 </button>
             </form>
         |]

@@ -87,16 +87,21 @@ instance Controller PostsController where
 
                 case existingVote of
                     Just existingVote ->
-                        existingVote
-                            |> set #vote vote
-                            |> updateRecord
+                        if existingVote.vote == vote
+                            then deleteRecord existingVote
+                            else do
+                                existingVote
+                                    |> set #vote vote
+                                    |> updateRecord
+                                pure ()
 
-                    Nothing ->
+                    Nothing -> do
                         newRecord @PostVote
                             |> set #postId postId
                             |> set #userId currentUser.id
                             |> set #vote vote
                             |> createRecord
+                        pure ()
 
                 setSuccessMessage "Vote saved!"
                 redirectTo (ShowPostAction { postId })
