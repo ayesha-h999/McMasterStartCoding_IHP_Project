@@ -16,6 +16,7 @@ instance Controller PostsController where
         render IndexView { .. }
 
     action NewPostAction = do
+        ensureIsUser
         let post = newRecord
         render NewView { .. }
 

@@ -7,7 +7,7 @@ instance View IndexView where
     html IndexView { .. } = [hsx|
         {breadcrumb}
 
-        <h1>Index<a href={pathTo NewPostAction} class="btn btn-primary ms-4">+ New</a></h1>
+        <h1>Index {newPostButton}</h1>
         <div class="table-responsive">
             <table class="table">
                 <thead>
@@ -28,6 +28,14 @@ instance View IndexView where
             breadcrumb = renderBreadcrumb
                 [ breadcrumbLink "Posts" PostsAction
                 ]
+
+newPostButton :: Html
+newPostButton =
+    case currentUserOrNothing of
+        Just _ -> [hsx|
+            <a href={pathTo NewPostAction} class="btn btn-primary ms-4">+ New</a>
+        |]
+        Nothing -> mempty
 
 renderPost :: Post -> Html
 renderPost post = [hsx|
