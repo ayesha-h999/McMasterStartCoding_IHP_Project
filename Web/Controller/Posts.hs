@@ -13,6 +13,8 @@ instance Controller PostsController where
         posts <- query @Post 
             |> orderByDesc #createdAt
             |> fetch
+        posts <- posts
+            |> collectionFetchRelated #userId
         render IndexView { .. }
 
     action NewPostAction = do
@@ -28,22 +30,30 @@ instance Controller PostsController where
 
 
     action EditPostAction { postId } = do
+        ensureIsUser
         post <- fetch postId
-        render EditView { .. }
+        if post.userId == currentUser.id
+            then render EditView { .. }
+            else redirectTo PostsAction
 
     action UpdatePostAction { postId } = do
+        ensureIsUser
         post <- fetch postId
-        post
-            |> buildPost
-            |> ifValid \case
-                Left post -> render EditView { .. }
-                Right post -> do
-                    post <- post |> updateRecord
-                    setSuccessMessage "Post updated"
-                    redirectTo EditPostAction { .. }
+        if post.userId /= currentUser.id
+            then redirectTo PostsAction
+        else do
+            post
+                |> buildPost
+                |> ifValid \case
+                    Left post -> render EditView { .. }
+                    Right post -> do
+                        post <- post |> updateRecord
+                        setSuccessMessage "Post updated"
+                        redirectTo EditPostAction { .. }
 
     action CreatePostAction = do
-        let post = newRecord @Post
+        ensureIsUser
+        let post = newRecord @Post |> set #userId (get #id currentUser)
         post
             |> buildPost
             |> ifValid \case
@@ -54,10 +64,14 @@ instance Controller PostsController where
                     redirectTo PostsAction
 
     action DeletePostAction { postId } = do
+        ensureIsUser
         post <- fetch postId
-        deleteRecord post
-        setSuccessMessage "Post deleted"
-        redirectTo PostsAction
+        if post.userId == currentUser.id
+        then do
+            deleteRecord post
+            setSuccessMessage "Post deleted"
+            redirectTo PostsAction
+        else redirectTo PostsAction
 
 buildPost post = post
     |> fill @'["title", "body"]

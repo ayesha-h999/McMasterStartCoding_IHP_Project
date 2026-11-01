@@ -1,7 +1,7 @@
 module Web.View.Posts.Index where
 import Web.View.Prelude
 
-data IndexView = IndexView { posts :: [Post] }
+data IndexView = IndexView { posts :: [Include "userId" Post] }
 
 instance View IndexView where
     html IndexView { .. } = [hsx|
@@ -37,13 +37,24 @@ newPostButton =
         |]
         Nothing -> mempty
 
-renderPost :: Post -> Html
+renderPost :: Include "userId" Post -> Html
 renderPost post = [hsx|
     <tr>
-        <td><a href={ShowPostAction post.id}>{post.title}</a></td>
-        <!-- <td>{post.body}</td> -->
-        <!-- <td><a href={ShowPostAction post.id}>Show</a></td> -->
-        <td><a href={EditPostAction post.id} class="text-muted">Edit</a></td>
-        <td><a href={DeletePostAction post.id} class="js-delete text-muted">Delete</a></td>
+        <td>
+            <a href={ShowPostAction post.id}>{post.title}</a>
+            <br/>
+            <small>Posted by: {post.userId.name}</small>
+        </td>
+        {postActions}
     </tr>
 |]
+    where
+        postActions = case currentUserOrNothing of
+            Just user | user.id == post.userId.id -> [hsx|
+                <td><a href={EditPostAction post.id} class="text-muted">Edit</a></td>
+                <td><a href={DeletePostAction post.id} class="js-delete text-muted">Delete</a></td>
+            |]
+            _ -> [hsx|
+                <td></td>
+                <td></td>
+            |]
