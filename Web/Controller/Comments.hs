@@ -58,7 +58,6 @@ instance Controller CommentsController where
         redirectTo CommentsAction
 
 buildComment comment = comment
-    |> fill @'["postId", "title", "author", "body"]
+    |> fill @'["postId", "title", "body"]
     |> validateField #title nonEmpty
-    |> validateField #author nonEmpty
     |> validateField #body nonEmpty

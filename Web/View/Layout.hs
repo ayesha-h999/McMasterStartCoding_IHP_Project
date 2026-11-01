@@ -7,6 +7,20 @@ import Web.Types
 import Web.Routes
 import Application.Helper.View
 
+authNavigation :: Html
+authNavigation =
+    case currentUserOrNothing of
+        Just _ -> [hsx|
+            <a class="nav-link" href={PostsAction}>Posts</a>
+            <a class="nav-link js-delete js-delete-no-confirm" href={DeleteSessionAction}>Logout</a>
+        |]
+        Nothing -> [hsx|
+            <a class="nav-link" href={PostsAction}>Posts</a>
+            <a class="nav-link" href={NewSessionAction}>Login</a>
+            <a class="nav-link" href={NewUserAction}>Sign Up</a>
+        |]
+
+
 defaultLayout :: Html -> Html
 defaultLayout inner = [hsx|
 <!DOCTYPE html>
@@ -19,12 +33,21 @@ defaultLayout inner = [hsx|
 
         <title>{pageTitleOrDefault "App"}</title>
     </head>
-    <body>
-        <div class="container mt-4">
-            {renderFlashMessages}
-            {inner}
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container">
+        <a class="navbar-brand" href={PostsAction}>My App</a>
+        <div class="navbar-nav">
+            {authNavigation}
         </div>
-    </body>
+    </div>
+</nav>
+
+    <div class="container mt-4">
+        {renderFlashMessages}
+        {inner}
+    </div>
+</body>
 </html>
 |]
 

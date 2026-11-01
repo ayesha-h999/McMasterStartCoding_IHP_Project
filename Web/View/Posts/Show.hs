@@ -10,7 +10,6 @@ instance View ShowView where
         {breadcrumb}
         <h1>{post.title}</h1>
         <p>{post.createdAt |> timeAgo}</p>
-        <p>Posted by: {post.author}</p>
         <div>{post.body |> renderMarkdown}</div>
 
         <a href={NewCommentAction post.id}>Add Comment</a>
@@ -39,7 +38,6 @@ renderMarkdown text =
 renderComment comment = [hsx|
         <div class="mt-4">
             <h5>{comment.title}</h5>
-            <p>Commented By: {comment.author}</p>
             <p>{comment.body}</p>
         </div>
     |]

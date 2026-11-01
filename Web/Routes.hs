@@ -30,3 +30,17 @@ POST /UpdateComment?commentId UpdateCommentAction
 DELETE /DeleteComment?commentId DeleteCommentAction
 |]
 
+instance AutoRoute SessionsController
+
+
+
+[routes|UsersController
+GET /Users UsersAction
+GET /NewUser NewUserAction
+POST /CreateUser CreateUserAction
+GET /ShowUser?userId ShowUserAction
+GET /EditUser?userId EditUserAction
+POST /UpdateUser?userId UpdateUserAction
+DELETE /DeleteUser?userId DeleteUserAction
+|]
+

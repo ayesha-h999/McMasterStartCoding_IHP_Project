@@ -14,7 +14,6 @@ instance View IndexView where
                     <tr>
                         <th>Post Id</th>
                         <th>Title</th>
-                        <th>Author</th>
                         <th>Body</th>
                         <th></th>
                         <th></th>
@@ -36,7 +35,6 @@ renderComment comment = [hsx|
     <tr>
         <td>{comment.postId}</td>
         <td>{comment.title}</td>
-        <td>{comment.author}</td>
         <td>{comment.body}</td>
         <td><a href={ShowCommentAction comment.id}>Show</a></td>
         <td><a href={EditCommentAction comment.id} class="text-muted">Edit</a></td>
