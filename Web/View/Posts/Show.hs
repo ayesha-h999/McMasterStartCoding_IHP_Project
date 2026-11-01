@@ -11,8 +11,9 @@ instance View ShowView where
         <h1>{post.title}</h1>
         <p>{post.createdAt |> timeAgo}</p>
         <div>{post.body |> renderMarkdown}</div>
+        <h4>Comments:</h4>
 
-        <a href={NewCommentAction post.id}>Add Comment</a>
+        {addCommentButton post.id}
 
         <div>{forEach post.comments renderComment}</div>
 
@@ -41,3 +42,11 @@ renderComment comment = [hsx|
             <p>{comment.body}</p>
         </div>
     |]
+
+addCommentButton :: Id Post -> Html
+addCommentButton postId =
+    case currentUserOrNothing of
+        Just _ -> [hsx|
+            <a href={NewCommentAction postId}>Add Comment</a>
+        |]
+        Nothing -> mempty
