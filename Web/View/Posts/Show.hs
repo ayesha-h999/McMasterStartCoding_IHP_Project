@@ -7,6 +7,8 @@ data ShowView = ShowView
     { post :: Include "comments" Post
     , author :: User
     , commentsWithUsers :: [(Comment, User)]
+    , upvoteCount :: Int
+    , downvoteCount :: Int
     }
 
 instance View ShowView where
@@ -20,6 +22,11 @@ instance View ShowView where
     </div>
     <div class="post-body">
         {post.body |> renderMarkdown}
+    </div>
+    <div class="post-voting">
+        <span>👍 {upvoteCount}</span>
+        <span>👎 {downvoteCount}</span>
+        {voteButtons post.id}
     </div>
 </div>
         <h4 id="ctitle">Comments:</h4>
@@ -62,3 +69,20 @@ addCommentButton postId =
             <a href={NewCommentAction postId}>Add Comment</a>
         |]
         Nothing -> mempty
+
+voteButtons :: Id Post -> Html
+voteButtons postId =
+    case currentUserOrNothing of
+        Just _ -> [hsx|
+            <form method="POST" action={VotePostAction postId}>
+                <button type="submit" name="vote" value="1">
+                    👍 Upvote
+                </button>
+                <button type="submit" name="vote" value="-1">
+                    👎 Downvote
+                </button>
+            </form>
+        |]
+        Nothing -> [hsx|
+            
+        |]

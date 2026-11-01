@@ -1,5 +1,4 @@
 -- Your database schema. Use the Schema Designer at http://localhost:8001/ to add some tables.
-CREATE TYPE vote_type AS ENUM ('upvote', 'downvote');
 CREATE TABLE comments (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     post_id UUID NOT NULL,
@@ -22,7 +21,7 @@ CREATE TABLE post_votes (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     post_id UUID NOT NULL,
     user_id UUID NOT NULL,
-    vote vote_type NOT NULL,
+    vote INT NOT NULL,
     UNIQUE(user_id, post_id)
 );
 CREATE INDEX post_votes_post_id_index ON post_votes (post_id);
@@ -31,7 +30,7 @@ CREATE TABLE comment_votes (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY NOT NULL,
     comment_id UUID NOT NULL,
     user_id UUID NOT NULL,
-    vote vote_type NOT NULL,
+    vote INT NOT NULL,
     UNIQUE(user_id, comment_id)
 );
 CREATE INDEX comment_votes_comment_id_index ON comment_votes (comment_id);

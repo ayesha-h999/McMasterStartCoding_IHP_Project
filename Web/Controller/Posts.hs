@@ -30,6 +30,11 @@ instance Controller PostsController where
         commentsWithUsers <- forM post.comments $ \comment -> do
             commenter <- fetch (Id comment.userId :: Id' "users")
             pure (comment, commenter)
+        postVotes <- query @PostVote
+            |> filterWhere (#postId, postId)
+            |> fetch
+        let upvoteCount = length (filter (\vote -> vote.vote == 1) postVotes)
+        let downvoteCount = length (filter (\vote -> vote.vote == -1) postVotes)
         render ShowView { .. }
 
 
@@ -67,6 +72,35 @@ instance Controller PostsController where
                     setSuccessMessage "Post created"
                     redirectTo PostsAction
 
+    action VotePostAction { postId } = do
+        ensureIsUser
+
+        let vote = param @Int "vote"
+
+        if vote /= 1 && vote /= -1
+            then redirectTo (ShowPostAction { postId })
+            else do
+                existingVote <- query @PostVote
+                    |> filterWhere (#postId, postId)
+                    |> filterWhere (#userId, currentUser.id)
+                    |> fetchOneOrNothing
+
+                case existingVote of
+                    Just existingVote ->
+                        existingVote
+                            |> set #vote vote
+                            |> updateRecord
+
+                    Nothing ->
+                        newRecord @PostVote
+                            |> set #postId postId
+                            |> set #userId currentUser.id
+                            |> set #vote vote
+                            |> createRecord
+
+                setSuccessMessage "Vote saved!"
+                redirectTo (ShowPostAction { postId })
+    
     action DeletePostAction { postId } = do
         ensureIsUser
         post <- fetch postId

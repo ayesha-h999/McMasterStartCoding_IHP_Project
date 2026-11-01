@@ -17,6 +17,7 @@ GET /ShowPost?postId ShowPostAction
 GET /EditPost?postId EditPostAction
 POST /UpdatePost?postId UpdatePostAction
 DELETE /DeletePost?postId DeletePostAction
+POST /VotePost?postId VotePostAction
 |]
 
 
