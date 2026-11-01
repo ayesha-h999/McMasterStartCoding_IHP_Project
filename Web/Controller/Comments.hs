@@ -24,23 +24,34 @@ instance Controller CommentsController where
         render ShowView { .. }
 
     action EditCommentAction { commentId } = do
+        ensureIsUser
         comment <- fetch commentId
+        if comment.userId == unpackId currentUser.id
+            then render EditView { .. }
+            else redirectTo ShowPostAction { postId = comment.postId }
         render EditView { .. }
 
     action UpdateCommentAction { commentId } = do
+        ensureIsUser
         comment <- fetch commentId
-        comment
-            |> buildComment
-            |> ifValid \case
-                Left comment -> render EditView { .. }
-                Right comment -> do
-                    comment <- comment |> updateRecord
-                    setSuccessMessage "Comment updated"
-                    redirectTo EditCommentAction { .. }
+        if comment.userId == unpackId currentUser.id
+            then
+                comment
+                    |> buildComment
+                    |> ifValid \case
+                        Left comment -> render EditView { .. }
+                        Right comment -> do
+                            comment <- comment |> updateRecord
+                            setSuccessMessage "Comment updated"
+                            redirectTo ShowPostAction { postId = comment.postId }
+            else
+                redirectTo ShowPostAction { postId = comment.postId }
 
     action CreateCommentAction = do
+        ensureIsUser
         let comment = newRecord @Comment
         comment
+            |> set #userId (unpackId currentUser.id)
             |> buildComment
             |> ifValid \case
                 Left comment -> do
@@ -52,10 +63,15 @@ instance Controller CommentsController where
                     redirectTo ShowPostAction { postId = comment.postId }
 
     action DeleteCommentAction { commentId } = do
+        ensureIsUser
         comment <- fetch commentId
-        deleteRecord comment
-        setSuccessMessage "Comment deleted"
-        redirectTo CommentsAction
+        if comment.userId == unpackId currentUser.id
+            then do
+                deleteRecord comment
+                setSuccessMessage "Comment deleted"
+                redirectTo CommentsAction
+            else do
+                redirectTo ShowPostAction { postId = comment.postId }
 
 buildComment comment = comment
     |> fill @'["postId", "title", "body"]

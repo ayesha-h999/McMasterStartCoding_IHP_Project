@@ -1,0 +1,78 @@
+/* General page styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+}
+
+/* Main content */
+.container {
+    max-width: 1000px;
+}
+
+/* Post title */
+h1 {
+    color: #263445;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+/* Post content */
+p {
+    line-height: 1.7;
+}
+
+/* Post card */
+.post-card {
+    background: white;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.06);
+    margin-top: 24px;
+    margin-bottom: 30px;
+}
+
+.post-meta {
+    display: flex;
+    gap: 20px;
+    color: #777;
+    font-size: 0.9rem;
+    margin-bottom: 24px;
+}
+
+.post-body {
+    font-size: 1.05rem;
+    line-height: 1.8;
+}
+
+#ctitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #536b5d;
+    margin-top: 35px;
+    margin-bottom: 18px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #dce5df;
+}
+
+/* Comments */
+.comment-card {
+    background: white;
+    padding: 20px 24px;
+    border-radius: 10px;
+    border-left: 4px solid #8ba99a;
+    margin-top: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.comment-card h5 {
+    font-weight: 600;
+    color: #34483d;
+    margin-bottom: 10px;
+}
+
+.comment-card p {
+    margin-bottom: 0;
+}

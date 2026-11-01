@@ -3,19 +3,30 @@ import Web.View.Prelude
 import qualified Text.MMark as MMark
 
 
-data ShowView = ShowView { post :: Include "comments" Post }
+data ShowView = ShowView 
+    { post :: Include "comments" Post
+    , author :: User
+    , commentsWithUsers :: [(Comment, User)]
+    }
 
 instance View ShowView where
     html ShowView { .. } = [hsx|
         {breadcrumb}
-        <h1>{post.title}</h1>
-        <p>{post.createdAt |> timeAgo}</p>
-        <div>{post.body |> renderMarkdown}</div>
-        <h4>Comments:</h4>
+        <div class="post-card">
+    <h1>{post.title}</h1>
+    <div class="post-meta">
+        <span>Posted by: {author.name}</span>
+        <span>{post.createdAt |> timeAgo}</span>
+    </div>
+    <div class="post-body">
+        {post.body |> renderMarkdown}
+    </div>
+</div>
+        <h4 id="ctitle">Comments:</h4>
 
         {addCommentButton post.id}
 
-        <div>{forEach post.comments renderComment}</div>
+        <div>{forEach commentsWithUsers renderComment}</div>
 
 
 
@@ -36,12 +47,13 @@ renderMarkdown text =
         Right markdown -> MMark.render markdown |> tshow |> preEscapedToHtml
 
 
-renderComment comment = [hsx|
-        <div class="mt-4">
-            <h5>{comment.title}</h5>
-            <p>{comment.body}</p>
-        </div>
-    |]
+renderComment (comment, commenter) = [hsx|
+    <div class="comment-card">
+        <h5>{comment.title}</h5>
+        <small>Commented by: {commenter.name}</small>
+        <p>{comment.body}</p>
+    </div>
+|]
 
 addCommentButton :: Id Post -> Html
 addCommentButton postId =

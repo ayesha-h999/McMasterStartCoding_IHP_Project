@@ -26,6 +26,10 @@ instance Controller PostsController where
         post <- fetch postId
             >>= pure . modify #comments (orderByDesc #createdAt)
             >>= fetchRelated #comments
+        author <- fetch post.userId
+        commentsWithUsers <- forM post.comments $ \comment -> do
+            commenter <- fetch (Id comment.userId :: Id' "users")
+            pure (comment, commenter)
         render ShowView { .. }
 
 
