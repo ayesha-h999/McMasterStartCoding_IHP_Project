@@ -19,6 +19,7 @@ data PostsController
     | UpdatePostAction { postId :: !(Id Post) }
     | DeletePostAction { postId :: !(Id Post) }
     | VotePostAction { postId :: !(Id Post) }
+    | ReactToPostAction { postId :: !(Id Post) }
     deriving (Eq, Show, Data)
 
 data CommentsController
@@ -30,6 +31,7 @@ data CommentsController
     | UpdateCommentAction { commentId :: !(Id Comment) }
     | DeleteCommentAction { commentId :: !(Id Comment) }
     | VoteCommentAction { commentId :: !(Id Comment) }
+    | ReactToCommentAction { commentId :: !(Id Comment) }
     deriving (Eq, Show, Data)
 
 

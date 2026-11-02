@@ -108,6 +108,38 @@ instance Controller CommentsController where
                 setSuccessMessage "Vote saved!"
                 redirectTo ShowPostAction { postId = comment.postId }
 
+    action ReactToCommentAction { commentId } = do
+        ensureIsUser
+
+        comment <- fetch commentId
+        let emoji = param @Text "emoji"
+
+        if emoji `notElem` ["❤️", "😂", "😮", "😢", "🎉", "🙏"]
+            then redirectTo ShowPostAction { postId = comment.postId }
+            else do
+                existingReaction <- query @CommentReaction
+                    |> filterWhere (#commentId, commentId)
+                    |> filterWhere (#userId, currentUser.id)
+                    |> filterWhere (#emoji, emoji)
+                    |> fetchOneOrNothing
+
+                case existingReaction of
+                    Just existingReaction ->
+                        deleteRecord existingReaction
+
+                    Nothing -> do
+                        newRecord @CommentReaction
+                            |> set #commentId commentId
+                            |> set #userId currentUser.id
+                            |> set #emoji emoji
+                            |> createRecord
+                        pure ()
+
+                setSuccessMessage "Reaction saved!"
+                redirectTo ShowPostAction { postId = comment.postId }
+
+
+
 buildComment comment = comment
     |> fill @'["postId", "title", "body"]
     |> validateField #title nonEmpty

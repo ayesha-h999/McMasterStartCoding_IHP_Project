@@ -18,6 +18,7 @@ GET /EditPost?postId EditPostAction
 POST /UpdatePost?postId UpdatePostAction
 DELETE /DeletePost?postId DeletePostAction
 POST /VotePost?postId VotePostAction
+POST /ReactToPost?postId ReactToPostAction
 |]
 
 
@@ -30,6 +31,7 @@ GET /ShowComment?commentId ShowCommentAction
 GET /EditComment?commentId EditCommentAction
 POST /UpdateComment?commentId UpdateCommentAction
 DELETE /DeleteComment?commentId DeleteCommentAction
+POST /ReactToComment?commentId ReactToCommentAction
 |]
 
 instance AutoRoute SessionsController

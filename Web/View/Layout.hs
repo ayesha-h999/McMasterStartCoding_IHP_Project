@@ -36,7 +36,7 @@ defaultLayout inner = [hsx|
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
     <div class="container">
-        <a class="navbar-brand" href={PostsAction}>My App</a>
+        <a class="navbar-brand" href={PostsAction}>Reddit Clone</a>
         <div class="navbar-nav">
             {authNavigation}
         </div>

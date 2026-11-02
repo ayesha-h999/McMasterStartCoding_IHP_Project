@@ -36,14 +36,19 @@ instance Controller PostsController where
 
             let upvotes = length (filter (\vote -> vote.vote == 1) commentVotes)
             let downvotes = length (filter (\vote -> vote.vote == -1) commentVotes)
+            commentReactions <- query @CommentReaction
+                |> filterWhere (#commentId, comment.id)
+                |> fetch
+            pure (comment, commenter, upvotes, downvotes, commentReactions)
 
-            pure (comment, commenter, upvotes, downvotes)
-            
         postVotes <- query @PostVote
             |> filterWhere (#postId, postId)
             |> fetch
         let upvoteCount = length (filter (\vote -> vote.vote == 1) postVotes)
         let downvoteCount = length (filter (\vote -> vote.vote == -1) postVotes)
+        postReactions <- query @PostReaction
+            |> filterWhere (#postId, postId)
+            |> fetch
         render ShowView { .. }
 
 
@@ -113,6 +118,35 @@ instance Controller PostsController where
                         pure ()
 
                 setSuccessMessage "Vote saved!"
+                redirectTo (ShowPostAction { postId })
+
+    action ReactToPostAction { postId } = do
+        ensureIsUser
+
+        let emoji = param @Text "emoji"
+
+        if emoji `notElem` ["❤️", "😂", "😮", "😢", "🎉", "🙏"]
+            then redirectTo (ShowPostAction { postId })
+            else do
+                existingReaction <- query @PostReaction
+                    |> filterWhere (#postId, postId)
+                    |> filterWhere (#userId, currentUser.id)
+                    |> filterWhere (#emoji, emoji)
+                    |> fetchOneOrNothing
+
+                case existingReaction of
+                    Just existingReaction -> do
+                        deleteRecord existingReaction
+
+                    Nothing -> do
+                        newRecord @PostReaction
+                            |> set #postId postId
+                            |> set #userId currentUser.id
+                            |> set #emoji emoji
+                            |> createRecord
+                        pure ()
+
+                setSuccessMessage "Reaction saved!"
                 redirectTo (ShowPostAction { postId })
     
     action DeletePostAction { postId } = do
