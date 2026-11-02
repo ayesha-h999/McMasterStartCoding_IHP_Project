@@ -2,11 +2,19 @@ module Web.View.Posts.Show where
 import Web.View.Prelude
 import qualified Text.MMark as MMark
 
+data CommentWithDetails = CommentWithDetails
+    { commentDetails :: Comment
+    , commenterDetails :: User
+    , commentUpvotes :: Int
+    , commentDownvotes :: Int
+    , commentReactionDetails :: [CommentReaction]
+    , childComments :: [CommentWithDetails]
+    }
 
 data ShowView = ShowView 
-    { post :: Include "comments" Post
+    { post :: Post
     , author :: User
-    , commentsWithUsers :: [(Comment, User, Int, Int, [CommentReaction])]
+    , commentsWithUsers :: [CommentWithDetails]
     , upvoteCount :: Int
     , downvoteCount :: Int
     , postReactions :: [PostReaction]
@@ -58,21 +66,28 @@ renderMarkdown text =
         Right markdown -> MMark.render markdown |> tshow |> preEscapedToHtml
 
 
-renderComment (comment, commenter, upvotes, downvotes, commentReactions) = [hsx|
+renderComment :: CommentWithDetails -> Html
+renderComment commentInfo = [hsx|
     <div class="comment-card">
-        <h5>{comment.title}</h5>
-        <small>Commented by: {commenter.name}</small>
-        <p>{comment.body}</p>
+        <h5>{commentDetails commentInfo |> (.title)}</h5>
+        <small>Commented by: {commenterDetails commentInfo |> (.name)}</small>
+        <p>{commentDetails commentInfo |> (.body)}</p>
 
         <div class="comment-voting">
-            <span>👍 {upvotes}</span>
-            <span>👎 {downvotes}</span>
-            {commentVoteButtons comment.id}
+            <span>👍 {commentUpvotes commentInfo}</span>
+            <span>👎 {commentDownvotes commentInfo}</span>
+            {commentVoteButtons (commentDetails commentInfo).id}
         </div>
+
         <div class="comment-reactions">
-            {commentReactionButtons comment.id commentReactions}
+            {commentReactionButtons (commentDetails commentInfo).id (commentReactionDetails commentInfo)}
         </div>
-        {replyButton comment.id}
+
+        {replyButton (commentDetails commentInfo).id}
+
+        <div class="comment-children">
+            {forEach (childComments commentInfo) renderComment}
+        </div>
     </div>
 |]
 

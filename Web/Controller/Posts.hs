@@ -24,22 +24,41 @@ instance Controller PostsController where
 
     action ShowPostAction { postId } = do
         post <- fetch postId
-            >>= pure . modify #comments (orderByDesc #createdAt)
-            >>= fetchRelated #comments
         author <- fetch post.userId
-        commentsWithUsers <- forM post.comments $ \comment -> do
-            commenter <- fetch (Id comment.userId :: Id' "users")
 
-            commentVotes <- query @CommentVote
-                |> filterWhere (#commentId, comment.id)
-                |> fetch
+        allComments <- query @Comment
+            |> filterWhere (#postId, postId)
+            |> orderByDesc #createdAt
+            |> fetch
 
-            let upvotes = length (filter (\vote -> vote.vote == 1) commentVotes)
-            let downvotes = length (filter (\vote -> vote.vote == -1) commentVotes)
-            commentReactions <- query @CommentReaction
-                |> filterWhere (#commentId, comment.id)
-                |> fetch
-            pure (comment, commenter, upvotes, downvotes, commentReactions)
+        let buildCommentTree comment = do
+                commenter <- fetch (Id comment.userId :: Id' "users")
+
+                commentVotes <- query @CommentVote
+                    |> filterWhere (#commentId, comment.id)
+                    |> fetch
+
+                let upvotes = length (filter (\vote -> vote.vote == 1) commentVotes)
+                let downvotes = length (filter (\vote -> vote.vote == -1) commentVotes)
+
+                commentReactions <- query @CommentReaction
+                    |> filterWhere (#commentId, comment.id)
+                    |> fetch
+
+                let children = filter (\child -> child.parentCommentId == Just comment.id) allComments
+                childComments <- forM children buildCommentTree
+
+                pure CommentWithDetails
+                    { commentDetails = comment
+                    , commenterDetails = commenter
+                    , commentUpvotes = upvotes
+                    , commentDownvotes = downvotes
+                    , commentReactionDetails = commentReactions
+                    , childComments = childComments
+                    }
+
+        let rootComments = filter (\comment -> comment.parentCommentId == Nothing) allComments
+        commentsWithUsers <- forM rootComments buildCommentTree
 
         postVotes <- query @PostVote
             |> filterWhere (#postId, postId)
