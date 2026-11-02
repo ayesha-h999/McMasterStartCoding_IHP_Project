@@ -6,7 +6,7 @@ import qualified Text.MMark as MMark
 data ShowView = ShowView 
     { post :: Include "comments" Post
     , author :: User
-    , commentsWithUsers :: [(Comment, User)]
+    , commentsWithUsers :: [(Comment, User, Int, Int)]
     , upvoteCount :: Int
     , downvoteCount :: Int
     }
@@ -54,11 +54,17 @@ renderMarkdown text =
         Right markdown -> MMark.render markdown |> tshow |> preEscapedToHtml
 
 
-renderComment (comment, commenter) = [hsx|
+renderComment (comment, commenter, upvotes, downvotes) = [hsx|
     <div class="comment-card">
         <h5>{comment.title}</h5>
         <small>Commented by: {commenter.name}</small>
         <p>{comment.body}</p>
+
+        <div class="comment-voting">
+            <span>▲ {upvotes}</span>
+            <span>▼ {downvotes}</span>
+            {commentVoteButtons comment.id}
+        </div>
     </div>
 |]
 
@@ -86,3 +92,18 @@ voteButtons postId =
         Nothing -> [hsx|
             
         |]
+
+commentVoteButtons :: Id Comment -> Html
+commentVoteButtons commentId =
+    case currentUserOrNothing of
+        Just _ -> [hsx|
+            <form method="POST" action={VoteCommentAction commentId}>
+                <button type="submit" name="vote" value="1">
+                    ▲ Upvote
+                </button>
+                <button type="submit" name="vote" value="-1">
+                    ▼ Downvote
+                </button>
+            </form>
+        |]
+        Nothing -> mempty

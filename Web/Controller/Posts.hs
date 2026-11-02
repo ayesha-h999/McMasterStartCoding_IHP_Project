@@ -29,7 +29,16 @@ instance Controller PostsController where
         author <- fetch post.userId
         commentsWithUsers <- forM post.comments $ \comment -> do
             commenter <- fetch (Id comment.userId :: Id' "users")
-            pure (comment, commenter)
+
+            commentVotes <- query @CommentVote
+                |> filterWhere (#commentId, comment.id)
+                |> fetch
+
+            let upvotes = length (filter (\vote -> vote.vote == 1) commentVotes)
+            let downvotes = length (filter (\vote -> vote.vote == -1) commentVotes)
+
+            pure (comment, commenter, upvotes, downvotes)
+            
         postVotes <- query @PostVote
             |> filterWhere (#postId, postId)
             |> fetch

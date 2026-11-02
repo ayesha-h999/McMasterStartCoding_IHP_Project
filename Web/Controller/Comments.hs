@@ -73,6 +73,41 @@ instance Controller CommentsController where
             else do
                 redirectTo ShowPostAction { postId = comment.postId }
 
+    action VoteCommentAction { commentId } = do
+        ensureIsUser
+        comment <- fetch commentId
+
+        let vote = param @Int "vote"
+
+        if vote /= 1 && vote /= -1
+            then redirectTo ShowPostAction { postId = comment.postId }
+            else do
+                existingVote <- query @CommentVote
+                    |> filterWhere (#commentId, commentId)
+                    |> filterWhere (#userId, currentUser.id)
+                    |> fetchOneOrNothing
+
+                case existingVote of
+                    Just existingVote ->
+                        if existingVote.vote == vote
+                            then deleteRecord existingVote
+                            else do
+                                existingVote
+                                    |> set #vote vote
+                                    |> updateRecord
+                                pure ()
+
+                    Nothing -> do
+                        newRecord @CommentVote
+                            |> set #commentId commentId
+                            |> set #userId currentUser.id
+                            |> set #vote vote
+                            |> createRecord
+                        pure ()
+
+                setSuccessMessage "Vote saved!"
+                redirectTo ShowPostAction { postId = comment.postId }
+
 buildComment comment = comment
     |> fill @'["postId", "title", "body"]
     |> validateField #title nonEmpty

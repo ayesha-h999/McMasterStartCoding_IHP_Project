@@ -25,6 +25,7 @@ POST /VotePost?postId VotePostAction
 GET /Comments CommentsAction
 GET /NewComment?postId NewCommentAction
 POST /CreateComment CreateCommentAction
+POST /VoteComment?commentId VoteCommentAction
 GET /ShowComment?commentId ShowCommentAction
 GET /EditComment?commentId EditCommentAction
 POST /UpdateComment?commentId UpdateCommentAction
