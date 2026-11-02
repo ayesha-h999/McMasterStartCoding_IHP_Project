@@ -19,6 +19,17 @@ instance Controller CommentsController where
         post <- fetch postId
         render NewView { .. }
 
+    action ReplyToCommentAction { commentId } = do
+        ensureIsUser
+
+        parentComment <- fetch commentId
+        let comment = newRecord @Comment
+                |> set #postId parentComment.postId
+                |> set #parentCommentId (Just parentComment.id)
+
+        post <- fetch parentComment.postId
+        render NewView { .. }
+
     action ShowCommentAction { commentId } = do
         comment <- fetch commentId
         render ShowView { .. }
@@ -141,6 +152,6 @@ instance Controller CommentsController where
 
 
 buildComment comment = comment
-    |> fill @'["postId", "title", "body"]
+    |> fill @'["postId", "parentCommentId", "title", "body"]
     |> validateField #title nonEmpty
     |> validateField #body nonEmpty

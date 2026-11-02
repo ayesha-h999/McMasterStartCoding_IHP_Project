@@ -25,6 +25,7 @@ POST /ReactToPost?postId ReactToPostAction
 [routes|CommentsController
 GET /Comments CommentsAction
 GET /NewComment?postId NewCommentAction
+GET /ReplyToComment?commentId ReplyToCommentAction
 POST /CreateComment CreateCommentAction
 POST /VoteComment?commentId VoteCommentAction
 GET /ShowComment?commentId ShowCommentAction

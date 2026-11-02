@@ -72,6 +72,7 @@ renderComment (comment, commenter, upvotes, downvotes, commentReactions) = [hsx|
         <div class="comment-reactions">
             {commentReactionButtons comment.id commentReactions}
         </div>
+        {replyButton comment.id}
     </div>
 |]
 
@@ -160,5 +161,13 @@ reactionCount reactions emoji =
 commentReactionCount :: [CommentReaction] -> Text -> Int
 commentReactionCount reactions emoji =
     length (filter (\reaction -> reaction.emoji == emoji) reactions)
+
+replyButton :: Id Comment -> Html
+replyButton commentId =
+    case currentUserOrNothing of
+        Just _ -> [hsx|
+            <a href={ReplyToCommentAction commentId}>Reply</a>
+        |]
+        Nothing -> mempty
 
 

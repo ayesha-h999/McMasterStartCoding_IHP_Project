@@ -32,6 +32,7 @@ data CommentsController
     | DeleteCommentAction { commentId :: !(Id Comment) }
     | VoteCommentAction { commentId :: !(Id Comment) }
     | ReactToCommentAction { commentId :: !(Id Comment) }
+    | ReplyToCommentAction { commentId :: !(Id Comment) }
     deriving (Eq, Show, Data)
 
 
